@@ -83,3 +83,58 @@ postSchema.virtual('votePercentage').get(function () {
 	const upVotes = this.votes.filter((v) => v.vote == 1);
 	return Math.floor((upVotes.length / this.votes.length) * 100);
 });
+
+postSchema.methods.vote = function(user, vote){
+	const existingVote = this.votes.find((v) => v.user._id.equals(user));
+
+	if(existingVote){
+		this.score -= existingVote.vote;
+		if(vote == 0){
+			this.votes.pull(exisitingVote);
+		} else {
+			this.score += vote;
+			exisitingVote.vote = vote;
+		}
+	} else if(vote!== 0){
+		this.score += vote;
+		this.votes.push({
+			user, vote
+		});
+	}
+	return this.save();
+};
+
+
+postSchema.methods.addComment = function (author, body){
+	this.comments.push({
+		author, body
+	});
+	return this.save();
+};
+
+postSchema.methods.removeComment = function (id){
+	const comment = this.comments.id(id)'
+	if(!comment) throw new Error('Comment not found');
+	comment.remove();
+	return this.save();
+};
+
+psotSchema.pre(/^find/, function () {
+	this.populate('author').populate('comments.author', '-role');
+});
+
+postSchema.pre('save', function(next){
+	this.wasNew = this.insNew;
+	next();
+});
+
+postSchema.post('save', function(doc, next){
+	if(this.wasNew) this.vote(this.author._id, 1);
+	doc
+		.populate('author')
+		.populate('comments.author', '-role')
+		.execPopulate()
+		.then(() => next());
+});
+
+module.exports = mongoose.model('post', postSchema);
