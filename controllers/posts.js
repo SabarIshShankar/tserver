@@ -70,3 +70,26 @@ exports.list = async(req, res, next) => {
 		next(error);
 	}
 };
+
+export.listByCategory = async(req, res, next) => {
+	try{
+		const {category} = req.params;
+		const {sortType = '-score'} = req.body;
+		const posts = await Post.find({category}).sort(sortType);
+		res.json(posts);
+	}catch(error){
+		next(error);
+	}
+};
+
+exports.listByUser = async(req, res, next) => {
+	try{
+		const {username} = req.params;
+		const {sortType = '-score'} = req.body;
+		const author = await User.findOne({username});
+		const posts = await Post.find({author: author.id}).sort(sortType);
+		res.json(posts);
+	} catch(error){
+		next(error);
+	}
+}
