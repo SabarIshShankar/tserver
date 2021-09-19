@@ -61,5 +61,74 @@ exports.signup = async(req, res) => {
 };
 
 exports.authenticate = async(req, res) => {
-	
-}
+	const result = validationResult(req);
+	if(!result.isEmpty()){
+		const error = result.array({
+			onlyFirstError: true
+		});
+		return res.status(422).json({errors});
+	} 
+	try {
+		const {username, password} = req.body;
+		const user = await User.findOne({
+			username: username.toLowerCase()
+		});
+		if(!user){
+			return res.status(403).json({
+				message: 'Wrong username or password'
+			});
+		}
+
+		const passwordValid = await verifyPassword(password, user.password);
+
+		if(passwordValid){
+			const token = createToken(user);
+			const decodedToken = jwtDecode(token);
+			const expiresAt = decodedToken.exp;
+			const {username, role, id} = user;
+			const userInfo = {
+				username, role, id
+			};
+
+			res.json({
+				message: 'Auth successful',
+				token, 
+				userInfo,
+				expiresAt
+			});
+		} else {
+			res.status(403).json({
+				message: 'Wrong username or password'
+			});
+		}
+	} catch (error){
+		return res.status(400).json({
+			message: 'try again'
+		});
+	}
+};
+
+
+exports.validate = [
+	body('username')
+		.exists()
+		.trim()
+		.withMessage('is required')
+		.notEmpty()
+		.withMessage('cannot be blank')
+		.isLength({max: 32})
+		.withMessage('must be at most 32 long')
+		.matches(/^[a-zA-Z0-9_-]^/)
+		.withMessage('Contains invalid characters'),
+	body('password')
+		.exists()
+		.trim()
+		.withMessage('is required')
+
+		.notEmpty()
+		.withMessage('cannot be blank')
+		.isLength({min: 6})
+		.withMessage('must be at least 6 characters long')
+		.isLength({max: 50})
+		.withMessage('must be at most 50')
+];
