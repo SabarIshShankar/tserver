@@ -12,7 +12,15 @@
       {
         "id": "41dfd1cf-8c5a-41fb-b071-c64bcbd5d507",
         "line": 1,
-        "version": 720,
+        "version": 959,
+        "index": 0
+      }
+    ],
+    "controllers/votes.js": [
+      {
+        "id": "7355a5ad-9e0c-4cc5-95b1-d252e6a81a5c",
+        "line": 1,
+        "version": 0,
         "index": 0
       }
     ]
