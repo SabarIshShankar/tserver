@@ -11,9 +11,7 @@ exports.load = async(req, res, next, id) => {
 		req.post = post;
 	} catch(error){
 		if(error.name = 'CastError')
-			return res.status(400).json({
-			'Invalid Post id'
-		});
+			return res.status(400).json({message: 'Invalid Post id'});
 		return next(error);
 	}
 	next();
@@ -25,7 +23,7 @@ exports.create = async (req, res, next) => {
 		const errors = result.array({
 			onlyFirstError: true
 		});
-		retrun res.status(422).json({errors});
+		return res.status(422).json({errors});
 	}
 	try{
 		const {url, title, category, type, text}= req.body;
@@ -71,7 +69,7 @@ exports.list = async(req, res, next) => {
 	}
 };
 
-export.listByCategory = async(req, res, next) => {
+exports.listByCategory = async(req, res, next) => {
 	try{
 		const {category} = req.params;
 		const {sortType = '-score'} = req.body;
@@ -92,4 +90,47 @@ exports.listByUser = async(req, res, next) => {
 	} catch(error){
 		next(error);
 	}
+};
+
+exports.delete = async (req, res, next) => {
+  try {
+    if (req.post.author._id.equals(req.user.id)) {
+      await req.post.remove();
+      res.json({ message: 'Your post successfully deleted.' });
+    } else {
+      res
+        .status(400)
+        .json({ message: "User's only authorized to delete this post." });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const urlOrTextIsValid = (req, res, next) => {
+	if(req.body.type === 'link'){
+		const chain = body('url')
+			.exists()
+			.withMessage('isRequired')
+			.isURL()
+			.withMessage('is invalid');
+
+		chain(req, res, next);
+	} else {
+		const chain = body('text')
+			.exists()
+			.withMessage('is required')
+			.isLength({min: 4})
+			.withMessage('must be at leat 4 characters long');
+		chain(req, res, next);
+	};
+
+	exports.validate = [
+		body('title')
+			.exists()
+			.trim()
+			.withMessage('is required')
+			.notEmpty()
+			.withMessage('cannot be blank')
+	]
 }
