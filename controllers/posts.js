@@ -123,8 +123,8 @@ const urlOrTextIsValid = (req, res, next) => {
 			.isLength({min: 4})
 			.withMessage('must be at leat 4 characters long');
 		chain(req, res, next);
-	};
-
+	}
+};
 	exports.validate = [
 		body('title')
 			.exists()
@@ -132,5 +132,18 @@ const urlOrTextIsValid = (req, res, next) => {
 			.withMessage('is required')
 			.notEmpty()
 			.withMessage('cannot be blank')
-	]
-}
+
+			.isLength({max: 100})
+			.withMessage('must be 100 long'), body('category')
+			.exists()
+			.trim()
+			.withMessage('is required')
+
+			.notEmpty()
+			.withMessage('cannot be blank'), body('type')
+			.exists()
+			.withMessage('is required')
+
+			.isIn(['link', 'text'])
+			.withMessage('must be a link or text post'), urlOrTextIsValid
+	];
