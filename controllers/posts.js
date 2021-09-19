@@ -125,7 +125,7 @@ const urlOrTextIsValid = (req, res, next) => {
 		chain(req, res, next);
 	}
 };
-	exports.validate = [
+exports.validate = [
 		body('title')
 			.exists()
 			.trim()
@@ -146,4 +146,4 @@ const urlOrTextIsValid = (req, res, next) => {
 
 			.isIn(['link', 'text'])
 			.withMessage('must be a link or text post'), urlOrTextIsValid
-	];
+];
