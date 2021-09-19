@@ -53,4 +53,4 @@ exports.validate = [
 		.withMessage('cannot be blank')
 		.isLength({max: 2000})
 		.withMessage('must be shorter long')
-]
+];
