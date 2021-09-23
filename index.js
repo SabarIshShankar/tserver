@@ -9,7 +9,7 @@ const connect = url => {
 if(require.main === module){
 	app.listen(config.port);
 	connect(config.db.prod);
-	mongose.connection.on('error', console.log);
+	mongoose.connection.on('error', console.log);
 }
 
 module.exports = {connect};

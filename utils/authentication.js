@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const config = require("./config");
+const config = require("../config");
 const createToken = (user) => {
 	if(!user.role){
 		throw new Error("No user role specified");

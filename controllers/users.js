@@ -30,7 +30,7 @@ exports.signup = async(req, res) => {
 			});
 		}
 		const newUser = new User(userData);
-		const savedUser = awaiy newUser.save();
+		const savedUser = await newUser.save();
 
 		if(savedUser){
 			const token = createToken(savedUser);

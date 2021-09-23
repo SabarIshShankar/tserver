@@ -113,13 +113,13 @@ postSchema.methods.addComment = function (author, body){
 };
 
 postSchema.methods.removeComment = function (id){
-	const comment = this.comments.id(id)'
+	const comment = this.comments.id(id);
 	if(!comment) throw new Error('Comment not found');
 	comment.remove();
 	return this.save();
 };
 
-psotSchema.pre(/^find/, function () {
+postSchema.pre(/^find/, function () {
 	this.populate('author').populate('comments.author', '-role');
 });
 

@@ -8,19 +8,19 @@ const commentAuth = require('./middlewares/commentAuth');
 
 const router = require('express').Router();
 
-router.post('/signup', user.validate, users.signup);
+router.post('/signup', users.validate, users.signup);
 router.post('/authenticate', users.validate, users.authenticate);
 
 
 router.param('post', posts.load);
-router.post('/posts', [require, posts.validate], post.create);
+router.post('/posts', [require, posts.validate], posts.create);
 router.get('/post/:post', posts.show);
-router.get('/posts', post.list);
+router.get('/posts', posts.list);
 router.get('/posts/:category', posts.listByCategory);
-router,get('/user/:username', posts.listByUser);
+router.get('/user/:username', posts.listByUser);
 router.delete('/post/:post', [requireAuth, postAuth], posts.delete);
 
-router.get('/post/:post/upvote', requireAith, votes.upvote);
+router.get('/post/:post/upvote', requireAuth, votes.upvote);
 router.get('/post/:post/downvote', requireAuth, votes.downvote);
 router.get('/post/:post/unvote', requireAuth, votes.unvote);
 
